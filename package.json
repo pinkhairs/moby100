@@ -2,9 +2,8 @@
   "name": "moby100",
   "version": "0.0.0",
   "private": true,
-  "entry": "./app.js",
   "scripts": {
-    "start": "nodemon ./app.js"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -14,7 +13,8 @@
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-router": "^6.3.0",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "terser": "^5.13.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
@@ -26,5 +26,6 @@
     "node-sass": "^7.0.1",
     "sass-loader": "^13.0.0",
     "style-loader": "^0.23.1"
-  }
+  },
+  "proxy": "http://localhost:3001"
 }
