@@ -4,9 +4,7 @@
   "private": true,
   "entry": "./app.js",
   "scripts": {
-    "start": "node ./app.js",
-    "dev": "nodemon ./app.js & webpack --watch",
-    "build": "rm -rf dist && webpack --mode development"
+    "start": "nodemon ./app.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -27,9 +25,6 @@
     "css-loader": "^6.7.1",
     "node-sass": "^7.0.1",
     "sass-loader": "^13.0.0",
-    "style-loader": "^0.23.1",
-    "webpack": "^5.72.1",
-    "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.9.0"
+    "style-loader": "^0.23.1"
   }
 }
