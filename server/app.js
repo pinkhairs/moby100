@@ -14,8 +14,11 @@ app.get('/', (req,res) => {
 });
 
 app.get('/api/words', (req,res) => {
+  res.header('Access-Control-Allow-Origin', "*");
+  res.header('Access-Control-Allow-Methods', 'GET');
+
   const mobyDick = helpers.getFileSegment('./static/mobydick.txt', 'Call me Ishmael', 'End of Project Gutenberg’s Moby Dick');
-  const top100Words = helpers.top100WordsInText(mobyDick);
+  const top100Words = helpers.topWordsInText(mobyDick, 100);
 
   res.send(top100Words);
 });
