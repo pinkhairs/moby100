@@ -63,6 +63,13 @@ app.get('/', (req,res) => {
   res.sendFile(path.join(__dirname, './client/dist/index.html'));
 });
 
+app.get('/api/words', (req,res) => {
+  const mobyDick = getFileSegment('./static/mobydick.txt', 'Call me Ishmael', 'End of Project Gutenberg’s Moby Dick');
+  const top100Words = top100WordsInText(mobyDick);
+
+  res.send(top100Words);
+});
+
 app.listen(port, () => {
     console.log(`Server listening on the port ${port}`);
 });
