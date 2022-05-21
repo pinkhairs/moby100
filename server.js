@@ -1,21 +1,14 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var port = 3001;
+const express = require('express');
+const path = require('path');
+const app = express(),
+      bodyParser = require("body-parser");
+      port = 3001;
+
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, './client/dist')));
 
 const fs = require("fs");
 var pluralize = require('pluralize');
-
-const { endianness } = require('os');
-const { resolveSoa, resolveNaptr } = require('dns');
-
-var app = express();
-
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
 const getFileSegment = (file, startText, endText) => {
   var fileSplit = fs.readFileSync(file).toString().split(/\r?\n/).filter(n => n);
@@ -66,14 +59,12 @@ const top100WordsInText = (text) => {
   return sortObjByValue(wordCounts).slice(0, 100);
 }
 
-app.get('/words', (req, res) => {
-  const mobyDick = getFileSegment('./static/mobydick.txt', 'Call me Ishmael.', 'End of Project Gutenberg’s Moby Dick');
-  const top100WordsInMobyDick = top100WordsInText(mobyDick);
-  res.send(top100WordsInMobyDick);
+app.get('/', (req,res) => {
+  res.sendFile(path.join(__dirname, './client/dist/index.html'));
 });
 
 app.listen(port, () => {
-  console.log(`Project listening on port ${port}`);
-})
+    console.log(`Server listening on the port ${port}`);
+});
 
 module.exports = app;
