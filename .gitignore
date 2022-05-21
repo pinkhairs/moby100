@@ -1,6 +1,9 @@
 # OSX
 .DS_Store
 
+# Database
+words.db
+
 # Logs
 logs
 *.log
