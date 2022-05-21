@@ -37,10 +37,10 @@ const topWordsInText = (text, numberOfWords) => {
       if (stopwords.includes(word)) continue;
 
       word = require('pluralize').singular(word)
-      wordAccountedFor =wordCounts.find(entry => entry.word === word);
+      wordAccountedFor =wordCounts.find(entry => entry.name === word);
 
       if (!wordAccountedFor) {
-        wordCounts.push({ word, count: 1 });
+        wordCounts.push({ name: word, count: 1 });
       } else {
         let entry = wordCounts.indexOf(wordAccountedFor);
         wordCounts[entry] = {...wordCounts[entry], count: wordCounts[entry].count + 1};
@@ -48,9 +48,8 @@ const topWordsInText = (text, numberOfWords) => {
     }
   }
 
-  var top100Words = sortObjArrBy(wordCounts, 'count').slice(0, 100);
-  console.log({top100Words});
-  return top100Words;
+  var topWords = sortObjArrBy(wordCounts, 'count').slice(0, numberOfWords);
+  return topWords;
 };
 
 module.exports = { getFileSegment, topWordsInText };
