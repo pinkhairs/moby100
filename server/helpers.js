@@ -16,35 +16,41 @@ const getFileSegment = (file, startText, endText) => {
   return segment.filter(n => n);
 }
 
-const top100WordsInText = (text) => {
-  var sortObjByValue = (obj) => {
-    var keys = Object.keys(obj);
-    return keys.sort((a,b) => {
-      if (obj[a] > 1) {
-        return obj[b]-obj[a]
-      }
-    });
+const topWordsInText = (text, numberOfWords) => {
+  var sortObjArrBy = (obj, sorter) => {
+    let smallToLarge = obj.sort((a, b) => (a[sorter] > b[sorter]) ? 1 : -1);
+    let largeToSmall = smallToLarge.reverse();
+    return largeToSmall;
   };
   
   let paragraphWords = [];
-  let wordCounts = {};
+  let wordCounts = []
   let stopwords = getFileSegment('./static/stop-words.txt', 'a', 'z');
+  let wordAccountedFor = false;
 
   for (let [i, paragraph] of text.entries()) {
     paragraphWords = paragraph.match(/\b(\w+)\b/g);
-    paragraphWords.forEach((word) => {
+
+    for (let i = 0; i < paragraphWords.length; i++)  {
+      let word = paragraphWords[i];
       word = word.trim().toLowerCase();
-      if (stopwords.includes(word)) return;
-      word = require('pluralize').singular(word);
-      
-      if (wordCounts[word]) {
-        wordCounts[word] = wordCounts[word] + 1;
+      if (stopwords.includes(word)) continue;
+
+      word = require('pluralize').singular(word)
+      wordAccountedFor =wordCounts.find(entry => entry.word === word);
+
+      if (!wordAccountedFor) {
+        wordCounts.push({ word, count: 1 });
       } else {
-        wordCounts[word] = 1;
+        let entry = wordCounts.indexOf(wordAccountedFor);
+        wordCounts[entry] = {...wordCounts[entry], count: wordCounts[entry].count + 1};
       }
-    })
+    }
   }
-  return sortObjByValue(wordCounts).slice(0, 100);
+
+  var top100Words = sortObjArrBy(wordCounts, 'count').slice(0, 100);
+  console.log({top100Words});
+  return top100Words;
 };
 
-module.exports = { getFileSegment, top100WordsInText };
+module.exports = { getFileSegment, topWordsInText };
