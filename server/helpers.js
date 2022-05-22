@@ -52,4 +52,11 @@ const topWordsInText = (text, numberOfWords) => {
   return topWords;
 };
 
-module.exports = { getFileSegment, topWordsInText };
+const getMobyDickTop100Words = () => {
+  const numberOfWords = 100;
+  const mobyDick = getFileSegment('./static/mobydick.txt', 'Call me Ishmael', 'End of Project Gutenberg’s Moby Dick');
+  const topWords = topWordsInText(mobyDick, numberOfWords);
+  return topWords;
+};
+
+module.exports = { getFileSegment, topWordsInText, getMobyDickTop100Words };

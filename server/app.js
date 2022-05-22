@@ -19,31 +19,17 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/api/words', (req, res) => {
-  const numberOfWords = 100;
-  const mobyDick = helpers.getFileSegment('./static/mobydick.txt', 'Call me Ishmael', 'End of Project Gutenberg’s Moby Dick');
-  const topWords = helpers.topWordsInText(mobyDick, numberOfWords);
-  let dbValues = [];
-
-  topWords.forEach((value, index) => {
-    let word = value.name;
-    let number = numberOfWords - index;
-    let count = value.count;
-
-    dbValues.push("('"+number+"', '"+word+"', '"+count+"')");
-  });
-
-  db.emptyDb()
-  .then(() => {
-    db.updateDb("INSERT INTO words (number, name, count) VALUES "+dbValues+";")
-    .then(() => {
-      res.sendStatus(200);
-    });
-  });
-})
-.get('/api/words', (req, res) => {
-  const topWords = db.getDb().then((result) => {
-    res.send(result);
+app.get('/api/words', (req, res) => {
+  db.getDb().then((result) => {
+    if (!result) {
+      const topWords = helpers.getMobyDickTop100Words();
+      db.populateDb(topWords)
+      .then(() => {
+        res.send(topWords);
+      });
+    } else {
+      res.send(result);
+    }
   });
 });
 
