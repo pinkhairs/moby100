@@ -2,9 +2,9 @@
   <div class="page">
     <header class="page-header">
       <h1>Moby Dick: Top 100 Words.</h1>
+      <p v-if="loading">Loading, ye...</p>
     </header>
-    <p type="button" v-if="loading">Loading, ye...</p>
-    <div v-else>
+    <div v-if="!loading">
       <ol class="words-list">
         <li :key="i" v-for="(entry, i) in words" :style="{ backgroundImage: 'url('+bgUrl+')' }">
           <span class="number">{{ entry.number }}</span>
@@ -98,6 +98,7 @@ h1 {
   }
 }
 li {
+  transition: background-image 1s;
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-position: center;
