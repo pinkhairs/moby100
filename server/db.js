@@ -11,7 +11,9 @@ const getDb = () => {
 
   return new Promise((resolve) => {
     return db.all("SELECT * FROM words", (err, result) => {
-      resolve(result);
+      if (err || !result.length) resolve(false);
+      else resolve(result);
+
       closeDb(db);
     });
   });
@@ -39,8 +41,30 @@ const emptyDb = () => {
   });
 };
 
+const populateDb = (topWords) => {
+  let dbValues = [];
+
+  topWords.forEach((value, index) => {
+    let word = value.name;
+    let number = topWords.length - index;
+    let count = value.count;
+
+    dbValues.push("('"+number+"', '"+word+"', '"+count+"')");
+  });
+  
+  return new Promise((resolve) => {
+    return emptyDb()
+    .then(() => {
+      updateDb("INSERT INTO words (number, name, count) VALUES "+dbValues+";")
+      .then(() => {
+        resolve(true);
+      });
+    });
+  });
+}
+
 const closeDb = (db) => {
   db.close();
 }
 
-module.exports = { getDb, updateDb, emptyDb };
+module.exports = { getDb, updateDb, emptyDb, populateDb };
