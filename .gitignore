@@ -2,7 +2,7 @@
 .DS_Store
 
 # Database
-words.db
+sql.db
 
 # Logs
 logs
