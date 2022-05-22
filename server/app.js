@@ -21,14 +21,14 @@ app.use((req, res, next) => {
 
 app.get('/api/words', (req, res) => {
   db.getDb().then((result) => {
-    if (!result) {
+    if (result) {
+      res.send(result);
+    } else {
       const topWords = helpers.getMobyDickTop100Words();
       db.populateDb(topWords)
       .then(() => {
         res.send(topWords);
       });
-    } else {
-      res.send(result);
     }
   });
 });
