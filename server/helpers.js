@@ -1,3 +1,5 @@
+const db = require('./db');
+
 const getFileSegment = (file, startText, endText) => {
   var fileSplit = require('fs').readFileSync(file).toString().split(/\r?\n/).filter(n => n);
   let segment = [];
@@ -59,4 +61,18 @@ const getMobyDickTop100Words = () => {
   return topWords;
 };
 
-module.exports = { getFileSegment, topWordsInText, getMobyDickTop100Words };
+const getWordsApi = async (req, res) => {
+  await db.getDb().then((result) => {
+    if (result) {
+      res.send(result);
+    } else {
+      const topWords = helpers.getMobyDickTop100Words();
+      db.populateDb(topWords)
+      .then(() => {
+        res.send(topWords);
+      });
+    }
+  });
+}
+
+module.exports = { getFileSegment, topWordsInText, getMobyDickTop100Words, getWordsApi };
