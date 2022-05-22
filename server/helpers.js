@@ -16,7 +16,7 @@ const getFileSegment = (file, startText, endText) => {
   return segment.filter(n => n);
 }
 
-const topWordsInText = (text, numberOfWords) => {
+const topWordsInText = async (text, numberOfWords) => {
   var sortObjArrBy = (obj, sorter) => {
     let smallToLarge = obj.sort((a, b) => (a[sorter] > b[sorter]) ? 1 : -1);
     let largeToSmall = smallToLarge.reverse();
@@ -48,7 +48,7 @@ const topWordsInText = (text, numberOfWords) => {
     }
   }
 
-  var topWords = sortObjArrBy(wordCounts, 'count').slice(0, numberOfWords);
+  var topWords = await sortObjArrBy(wordCounts, 'count').slice(0, numberOfWords);
   return topWords;
 };
 

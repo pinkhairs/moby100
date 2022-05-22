@@ -2,46 +2,39 @@ const sqlite3 = require("sqlite3").verbose();
 
 const openDb = () => {
   var db = new sqlite3.Database('./server/sql.db');
-  db.run("CREATE TABLE IF NOT EXISTS words (number, name, count)");
   return db;
 }
 
-const getDb = () => {
-  var db = openDb();
-
-  return new Promise((resolve) => {
-    return db.all("SELECT * FROM words", (err, result) => {
-      if (err || !result.length) resolve(false);
+const runSql = async (sql) => {
+  const db = await openDb();
+  return new Promise((resolve, rejected) => {
+    return db.all(sql, (err, result) => {
+      if (err || !result.length) resolve(rejected);
       else resolve(result);
 
       closeDb(db);
     });
-  });
-};
-
-const updateDb = (command) => {
-  var db = openDb();
-  
-  return new Promise((resolve) => {
-    return db.run(command, (err, result) => {
-      resolve(true);
-      closeDb(db);
-    });
+  }).catch((err) => {
+    throw err
   });
 }
-
-const emptyDb = () => {
-  var db = openDb();
-
-  return new Promise((resolve) => {
-    return db.run("DELETE FROM words", () => {
-      resolve(true);
-      closeDb(db);
-    });
-  });
+const getDb = async () => {
+  return await runSql("SELECT * FROM words");
 };
 
-const populateDb = (topWords) => {
+const updateDb = async (sql) => {
+  return await runSql(sql);
+}
+
+const emptyDb = async () => {
+  return await runSql("DELETE FROM words");
+};
+
+const createDb = async () => {
+  return await runSql("CREATE TABLE IF NOT EXISTS words (number, name, count)");
+}
+
+const populateDb = async (topWords) => {
   let dbValues = [];
 
   topWords.forEach((value, index) => {
@@ -51,16 +44,14 @@ const populateDb = (topWords) => {
 
     dbValues.push("('"+number+"', '"+word+"', '"+count+"')");
   });
-  
-  return new Promise((resolve) => {
-    return emptyDb()
-    .then(() => {
-      updateDb("INSERT INTO words (number, name, count) VALUES "+dbValues+";")
-      .then(() => {
-        resolve(true);
-      });
-    });
+
+  var sql = "INSERT INTO words (number, name, count) VALUES "+dbValues.join(',')+";";
+
+  var result = await emptyDb()
+  .then(() => {
+    return runSql(sql)
   });
+  return result;
 }
 
 const closeDb = (db) => {
