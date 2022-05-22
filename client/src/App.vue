@@ -8,7 +8,7 @@
       <ol class="words-list">
         <li :key="i" v-for="(entry, i) in words" :style="{ backgroundImage: 'url('+bgUrl+')' }">
           <span class="number">{{ entry.number }}</span>
-          <span :style="{fontSize: getFontSize(i)}" :class="entry.cssClass+' word'">{{ entry.name }}</span>
+          <span :style="{fontSize: getFontSize(i)}" class="word">{{ entry.name }}</span>
           <span class="count">{{ entry.count }}</span>
         </li>
       </ol>
@@ -49,13 +49,13 @@ export default {
       fetch('http://localhost:3001/api/words').
       then(response => response.json()).then((result) => {
         result.forEach((word) => {
-          this.words.push({ name: word.name, number: word.number, count: word.count, cssClass: word.name.replace(/[!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~]/g, '')});
+          this.words.push({ name: word.name, number: word.number, count: word.count});
         })
         this.loading = false;
       })
     },
     getFontSize(index) {
-      var fontSize = (124 - index)/2;
+      var fontSize = (124 - index) / 2;
       if (index === 0) return fontSize * 1.25 + 'px';
       return fontSize + 'px';
     }
