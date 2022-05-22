@@ -6,10 +6,10 @@ const openDb = () => {
 }
 
 const runSql = async (sql) => {
-  const db = await openDb();
-  return new Promise((resolve, rejected) => {
+  const db = openDb();
+  return await new Promise((resolve, reject) => {
     return db.all(sql, (err, result) => {
-      if (err || !result.length) resolve(rejected);
+      if (err) resolve(false);
       else resolve(result);
 
       closeDb(db);
@@ -18,6 +18,7 @@ const runSql = async (sql) => {
     throw err
   });
 }
+
 const getDb = async () => {
   return await runSql("SELECT * FROM words");
 };
@@ -29,10 +30,6 @@ const updateDb = async (sql) => {
 const emptyDb = async () => {
   return await runSql("DELETE FROM words");
 };
-
-const createDb = async () => {
-  return await runSql("CREATE TABLE IF NOT EXISTS words (number, name, count)");
-}
 
 const populateDb = async (topWords) => {
   let dbValues = [];
@@ -47,11 +44,13 @@ const populateDb = async (topWords) => {
 
   var sql = "INSERT INTO words (number, name, count) VALUES "+dbValues.join(',')+";";
 
-  var result = await emptyDb()
+  return await emptyDb()
   .then(() => {
-    return runSql(sql)
+    return runSql("CREATE TABLE IF NOT EXISTS words (number, name, count)")
+    .then(() => {
+      return runSql(sql).then(() => topWords);
+    })
   });
-  return result;
 }
 
 const closeDb = (db) => {

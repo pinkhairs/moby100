@@ -18,7 +18,7 @@ const getFileSegment = (file, startText, endText) => {
   return segment.filter(n => n);
 }
 
-const topWordsInText = async (text, numberOfWords) => {
+const topWordsInText = (text, numberOfWords) => {
   var sortObjArrBy = (obj, sorter) => {
     let smallToLarge = obj.sort((a, b) => (a[sorter] > b[sorter]) ? 1 : -1);
     let largeToSmall = smallToLarge.reverse();
@@ -50,7 +50,7 @@ const topWordsInText = async (text, numberOfWords) => {
     }
   }
 
-  var topWords = await sortObjArrBy(wordCounts, 'count').slice(0, numberOfWords);
+  var topWords = sortObjArrBy(wordCounts, 'count').slice(0, numberOfWords);
   return topWords;
 };
 
@@ -61,16 +61,13 @@ const getMobyDickTop100Words = () => {
   return topWords;
 };
 
-const getWordsApi = async (req, res) => {
-  await db.getDb().then((result) => {
+const getWordsApi = () => {
+  return db.getDb().then((result) => {
     if (result) {
-      res.send(result);
+      return result;
     } else {
-      const topWords = helpers.getMobyDickTop100Words();
-      db.populateDb(topWords)
-      .then(() => {
-        res.send(topWords);
-      });
+      const topWords = getMobyDickTop100Words();
+      return db.populateDb(topWords).then(topWords => topWords);
     }
   });
 }
