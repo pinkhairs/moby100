@@ -1,4 +1,4 @@
-import { getWords } from '../server/helpers.js';
+import { getWordsApi } from '../server/helpers.js';
 
 describe('Get words API test', function () {
 
@@ -9,7 +9,7 @@ describe('Get words API test', function () {
             send: function(input) { this.text = input } 
         };
 
-        const words = getWords(req, res);
+        const words = getWordsApi(req, res);
         
         const parseJson = () => {
           var json = JSON.stringify(words);
