@@ -20,7 +20,7 @@ const runSql = async (sql) => {
 }
 
 const getDb = async () => {
-  return await runSql("SELECT * FROM words");
+  return await runSql("SELECT number, name, count FROM words ORDER BY number DESC");
 };
 
 const updateDb = async (sql) => {
@@ -46,7 +46,7 @@ const populateDb = async (topWords) => {
 
   return await emptyDb()
   .then(() => {
-    return runSql("CREATE TABLE IF NOT EXISTS words (number, name, count)")
+    return runSql("CREATE TABLE IF NOT EXISTS words (number int, name, count int)")
     .then(() => {
       return runSql(sql).then(() => topWords);
     })
