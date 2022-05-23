@@ -1,14 +1,14 @@
 const db = require('./db');
 
 const getFileInLines = (file) => {
-  return require('fs').readFileSync(file).toString().split(/\r?\n/).filter(n => n);
+  return require('fs').readFileSync(file).toString().split(/\r?\n/).filter(n => n).entries();
 }
 
 const markEnds = (fileInLines, startText, endText) => {
   var ends = { beginning: 0, finale: 0 };
   var startSet = false;
 
-  for (let [i, value] of fileInLines.entries()) {
+  for (let [i, value] of fileInLines) {
     if (value.trim().startsWith(startText)) {
       if (!startSet) {
         ends.beginning = i;
@@ -28,7 +28,7 @@ const getFileSegment = (file, startText, endText) => {
   let bookEnds = markEnds(fileSplit, startText, endText);
   let lines = [];
 
-  for (let [i, value] of fileSplit.entries()) {
+  for (let [i, value] of fileSplit()) {
     if (i >= bookEnds.beginning && i <= bookEnds.finale) {
       lines.push(value);
     }
@@ -49,7 +49,7 @@ const topWordsInText = (text, numberOfWords) => {
   let stopwords = getFileSegment('./static/stop-words.txt', 'a', 'z');
   let wordAccountedFor = false;
 
-  for (let [i, paragraph] of text.entries()) {
+  for (let [i, paragraph] of text()) {
     paragraphWords = paragraph.match(/\b(\w+)\b/g);
 
     for (let i = 0; i < paragraphWords.length; i++)  {
