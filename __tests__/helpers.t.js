@@ -1,6 +1,6 @@
 import { getWordsApi } from '../server/helpers';
 const supertest = require("supertest");
-const app = require("../server/app");
+const app = require("../server");
 
 describe('Top 100 words in Moby Dick API', (t) => {
     const server = supertest(app);
