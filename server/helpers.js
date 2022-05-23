@@ -1,21 +1,40 @@
 const db = require('./db');
 
-const getFileSegment = (file, startText, endText) => {
-  var fileSplit = require('fs').readFileSync(file).toString().split(/\r?\n/).filter(n => n);
-  let segment = [];
-  let segmentStart;
+const getFileInLines = (file) => {
+  return require('fs').readFileSync(file).toString().split(/\r?\n/).filter(n => n);
+}
 
-  for (let [i, value] of fileSplit.entries()) {
-    if (value.trim().startsWith(endText)) break;
+const markEnds = (fileInLines, startText, endText) => {
+  var ends = { beginning: 0, finale: 0 };
+  var startSet = false;
+
+  for (let [i, value] of fileInLines.entries()) {
     if (value.trim().startsWith(startText)) {
-      segmentStart = i;
+      if (!startSet) {
+        ends.beginning = i;
+        startSet = true;
+      }
     }
-    
-    if (segmentStart && i >= segmentStart) {
-      segment.push(value);
+    if (value.trim().startsWith(endText)) {
+      ends.finale = i;
     }
   }
-  return segment.filter(n => n);
+
+  return ends;
+};
+
+const getFileSegment = (file, startText, endText) => {
+  var fileSplit = getFileInLines(file);
+  let bookEnds = markEnds(fileSplit, startText, endText);
+  let lines = [];
+
+  for (let [i, value] of fileSplit.entries()) {
+    if (i >= bookEnds.beginning && i <= bookEnds.finale) {
+      lines.push(value);
+    }
+  }
+
+  return lines.filter(n => n);
 }
 
 const topWordsInText = (text, numberOfWords) => {
@@ -35,7 +54,7 @@ const topWordsInText = (text, numberOfWords) => {
 
     for (let i = 0; i < paragraphWords.length; i++)  {
       let word = paragraphWords[i];
-      word = word.trim().toLowerCase();
+      word = word.toLowerCase();
       if (stopwords.includes(word)) continue;
 
       word = require('pluralize').singular(word)
@@ -55,8 +74,8 @@ const topWordsInText = (text, numberOfWords) => {
 };
 
 const getMobyDickTop100Words = () => {
-  const numberOfWords = 100;
   const mobyDick = getFileSegment('./static/mobydick.txt', 'Call me Ishmael', 'End of Project Gutenberg’s Moby Dick');
+  const numberOfWords = 100;
   const topWords = topWordsInText(mobyDick, numberOfWords);
   return topWords;
 };
@@ -72,4 +91,4 @@ const getWordsApi = () => {
   });
 }
 
-module.exports = { getFileSegment, topWordsInText, getMobyDickTop100Words, getWordsApi };
+module.exports = { getFileInLines, markEnds, getFileSegment, topWordsInText, getMobyDickTop100Words, getWordsApi }
