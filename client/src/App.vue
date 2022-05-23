@@ -91,7 +91,12 @@ h1 {
   padding: 0 1em 1em;
   color: #fff;
   gap: 1em;
-  @media (min-width: 600px) {
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    display: grid;
+    grid-template-columns: 4fr 3fr 2fr 1fr;
+    grid-template-rows: 3fr 3fr 2fr 2fr repeat(16, 1fr);
+  }
+  @media (min-width: 1280px) {
     display: grid;
     grid-template-columns: 5fr 4fr 3fr 2fr 1fr;
     grid-template-rows: 3fr 3fr 2fr 2fr repeat(16, 1fr);
@@ -110,7 +115,7 @@ li {
   align-items: center;
   justify-content: center;
   min-height: 80px;
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     height: 100px;
   }
   &:before {
