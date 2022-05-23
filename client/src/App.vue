@@ -48,8 +48,8 @@ export default {
     getWords() {
       fetch('http://localhost:3001/api/words').
       then(response => response.json()).then((result) => {
-        result.forEach((word) => {
-          this.words.push({ name: word.name, number: word.number, count: word.count});
+        result.forEach((word, index) => {
+          this.words.push({ name: word.name, number: word.number| 100 - index, count: word.count});
         })
         this.loading = false;
       })
