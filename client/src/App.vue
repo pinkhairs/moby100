@@ -1,10 +1,11 @@
 <template>
   <div class="page">
+    <div class="mobile-bg"></div>
     <header class="page-header">
       <h1>Moby Dick: Top 100 Words.</h1>
-      <p v-if="loading">Loading, ye...</p>
     </header>
-    <div v-if="!loading">
+    <p v-if="loading" class="loading">Loading, ye...</p>
+    <div v-else>
       <ol class="words-list">
         <li :key="i" v-for="(entry, i) in words" :style="{ backgroundImage: 'url('+bgUrl+')' }">
           <span class="number">{{ entry.number }}</span>
@@ -23,7 +24,7 @@ export default {
     return {
       words: [],
       loading: true,
-      bgUrl: require('./assets/bg/frame_000.jpg')
+      bgUrl: ''
     }
   },
   mounted() {
@@ -35,7 +36,10 @@ export default {
       image.src = require('./assets/bg/frame_'+i.toString().padStart(3, '0').toString()+'.jpg');
     }
 
+    if (window.innerWidth > 768) this.bgUrl = require('./assets/bg/frame_000.jpg');
+
     window.onscroll = () => {
+      if (window.innerWidth < 768) return;
       var windowHeight = document.body.offsetHeight - window.innerHeight;
       var scrollPosition = window.scrollY;
       var frameSpacing = Math.round(windowHeight / 27);
@@ -46,7 +50,7 @@ export default {
   },
   methods: {
     getWords() {
-      fetch('http://localhost:3001/api/words').
+      fetch('./api/words').
       then(response => response.json()).then((result) => {
         result.forEach((word, index) => {
           this.words.push({ name: word.name, number: word.number| 100 - index, count: word.count});
@@ -71,12 +75,33 @@ html, body {
 body {
   background: #111;
   font-family: Georgia, serif;
+  @media (max-width: 768px) {
+    &:before {
+      content: "";
+      display: block;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -10;
+      background: url(./assets/mobile-bg.jpg) no-repeat center center;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
+  }
 }
 .page-header {
   font-family: Arial, sans-serif;
   align-items: center;
   justify-content: space-between;
   padding: 1em;
+  text-align: center;
+  color: #fff;
+}
+.loading {
   text-align: center;
   color: #fff;
 }
@@ -107,7 +132,6 @@ li {
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-position: center;
-  background-size: cover;
   border-radius: 1em;
   padding: 1em;
   position: relative;
@@ -115,11 +139,14 @@ li {
   align-items: center;
   justify-content: center;
   min-height: 80px;
+    background-size: cover;
   @media (max-width: 768px) {
     height: 100px;
+    background-image: none;
+    background: none;
   }
   &:before {
-    background: rgba(0, 0, 0, .3);
+    background: rgba(0, 0, 0, .5);
     z-index: 3;
     position: absolute;
     top: 0;
